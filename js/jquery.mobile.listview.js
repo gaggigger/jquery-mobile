@@ -183,7 +183,8 @@ $.widget( "mobile.listview", $.mobile.widget, {
 			var a = item.find( "a" );
 				
 			if ( a.length ) {	
-				var icon = item.data("icon");
+				var icon = item.data("icon"),
+					multiicon = $list.data("multiicon");
 				
 				item
 					.buttonMarkup({
@@ -191,7 +192,7 @@ $.widget( "mobile.listview", $.mobile.widget, {
 						shadow: false,
 						corners: false,
 						iconpos: "right",
-						icon: a.length > 1 || icon === false ? false : icon || "arrow-r",
+						icon: (a.length > 1 && !multiicon) || icon === false ? false : icon || "arrow-r",
 						theme: itemTheme
 					});
 

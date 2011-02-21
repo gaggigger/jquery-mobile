@@ -53,7 +53,10 @@ $.widget( "mobile.textinput", $.mobile.widget, {
 			}
 			
 			toggleClear();
-			input.keyup(toggleClear);	
+			input.keyup(toggleClear);
+			input.parents("form").submit(function() {
+				return false;
+			});	
 		}
 		else{
 			input.addClass('ui-corner-all ui-shadow-inset' + themeclass);
