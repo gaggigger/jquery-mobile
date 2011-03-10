@@ -178,7 +178,7 @@
 
 			//set the generated BASE element's href attribute to a new page's base path
 			set: function( href ){
-				base.element.attr('href', docBase + path.get( href ));
+				base.element.attr('href', docBase + path.get( href ).replace(/^\//, ""));
 			},
 
 			//set the generated BASE element's href attribute to a new page's base path
@@ -225,6 +225,7 @@
 		else{
 			// defer execution for consistency between webkit/non webkit
 			setTimeout(callback, 0);
+			return $(this);
 		}
 	};
 
@@ -304,7 +305,7 @@
 			});
 
 			// save new page index
-			urlHistory.activeIndex = newActiveIndex ? newActiveIndex : urlHistory.activeIndex;
+			urlHistory.activeIndex = newActiveIndex !== undefined ? newActiveIndex : urlHistory.activeIndex;
 
 			//if it's a back, use reverse animation
 			if( back ){
@@ -659,7 +660,20 @@
 
 		//if there's a data-rel=back attr, go back in history
 		if( $this.is( "[data-rel='back']" ) ){
-			window.history.back();
+			var currentIndex = $.mobile.urlHistory.activeIndex, backToIndex;
+
+			// for each history entry that is not the current page (currentIndex - 1)
+			for(var i = currentIndex - 1; i >= 0; i--){
+				backToIndex = i;
+
+				// break when we've found the first page that isn't a dialog
+				if($.mobile.urlHistory.stack[i].url.indexOf(dialogHashKey) < 0 ){
+					break;
+				}
+			}
+
+			//use the difference between closest non dialog index and the current index
+			window.history.go(backToIndex - currentIndex);
 			return false;
 		}
 
