@@ -13,7 +13,7 @@ $.widget( "mobile.navbar", $.mobile.widget, {
 	_create: function(){
 		var $navbar = this.element,
 			$navbtns = $navbar.find("a"),
-			iconpos = $navbtns.filter('[data-icon]').length ? this.options.iconpos : undefined;
+			iconpos = $navbtns.filter( ":jqmData(icon)").length ? this.options.iconpos : undefined;
 		
 		$navbar
 			.addClass('ui-navbar')
@@ -32,9 +32,9 @@ $.widget( "mobile.navbar", $.mobile.widget, {
 				iconpos:	iconpos
 			});
 		
-		$navbar.delegate("a", "click",function(event){
-			$navbtns.removeClass( "ui-btn-active" );
-			$( this ).addClass( "ui-btn-active" );
+		$navbar.delegate("a", "vclick",function(event){
+			$navbtns.not( ".ui-state-persist" ).removeClass( $.mobile.activeBtnClass );
+			$( this ).addClass( $.mobile.activeBtnClass );
 		});	
 	}
 });

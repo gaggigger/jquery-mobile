@@ -11,9 +11,9 @@ $.fn.fixHeaderFooter = function(options){
 	return this.each(function(){
 		var $this = $(this);
 		
-		if( $this.data('fullscreen') ){ $this.addClass('ui-page-fullscreen'); }
-		$this.find('.ui-header[data-position="fixed"]').addClass('ui-header-fixed ui-fixed-inline fade'); //should be slidedown
-		$this.find('.ui-footer[data-position="fixed"]').addClass('ui-footer-fixed ui-fixed-inline fade'); //should be slideup		
+		if( $this.jqmData('fullscreen') ){ $this.addClass('ui-page-fullscreen'); }
+		$this.find( ".ui-header:jqmData(position='fixed')" ).addClass('ui-header-fixed ui-fixed-inline fade'); //should be slidedown
+		$this.find( ".ui-footer:jqmData(position='fixed')" ).addClass('ui-footer-fixed ui-fixed-inline fade'); //should be slideup		
 	});
 };
 
@@ -54,13 +54,12 @@ $.fixedToolbars = (function(){
 
 	$(function() {
 		$(document)
-			.bind(touchStartEvent,function(event){
+			.bind( "vmousedown",function(event){
 				if( touchToggleEnabled ) {
-					if( $(event.target).closest(ignoreTargets).length ){ return; }
 					stateBefore = currentstate;
 				}
 			})
-			.bind(touchStopEvent,function(event){
+			.bind( "vclick",function(event){
 				if( touchToggleEnabled ) {
 					if( $(event.target).closest(ignoreTargets).length ){ return; }
 					if( !scrollTriggered ){
@@ -70,7 +69,6 @@ $.fixedToolbars = (function(){
 				}
 			})
 			.bind('scrollstart',function(event){
-				if( $(event.target).closest(ignoreTargets).length ){ return; } //because it could be a touchmove...
 				scrollTriggered = true;
 				if(stateBefore == null){ stateBefore = currentstate; }
 
@@ -104,34 +102,34 @@ $.fixedToolbars = (function(){
 	//before page is shown, check for duplicate footer
 	$('.ui-page').live('pagebeforeshow', function(event, ui){
 		var page = $(event.target),
-			footer = page.find('[data-role="footer"]:not(.ui-sticky-footer)'),
-			id = footer.data('id');
-		stickyFooter = null;
-		if (id)
-		{
-			stickyFooter = $('.ui-footer[data-id="' + id + '"].ui-sticky-footer');
-			if (stickyFooter.length == 0) {
-				// No sticky footer exists for this data-id. We'll use this
-				// footer as the sticky footer for the group and then create
-				// a placeholder footer for the page.
-				stickyFooter = footer;
-				footer = stickyFooter.clone(); // footer placeholder
-				stickyFooter.addClass('ui-sticky-footer').before(footer);
-			}
-			footer.addClass('ui-footer-duplicate');
-			stickyFooter.appendTo($.mobile.pageContainer).css('top',0);
-			setTop(stickyFooter);
+			footer = page.find( ":jqmData(role='footer')" ),
+			id = footer.data('id'),
+			prevPage = ui.prevPage;
+		
+		prevFooter = prevPage && prevPage.find( ":jqmData(role='footer')" );
+		var prevFooterMatches = prevFooter.jqmData( "id" ) === id;
+		
+		if( prevFooterMatches ){
+			stickyFooter = footer;
+			setTop( stickyFooter.removeClass("fade").appendTo( $.mobile.pageContainer ) );
 		}
 	});
 
 	//after page is shown, append footer to new page
 	$('.ui-page').live('pageshow', function(event, ui){
-		if( stickyFooter && stickyFooter.length ){
-			stickyFooter.appendTo(event.target).css('top',0);
-		}
-		$.fixedToolbars.show(true, this);
-	});
+		var $this = $(this);
 		
+		if( stickyFooter && stickyFooter.length ){	
+			
+			setTimeout(function(){
+				setTop( stickyFooter.appendTo( $this ) );
+				stickyFooter = null;
+			},400);	
+		}
+		
+		$.fixedToolbars.show(true, this);	
+	});
+
 	
 	// element.getBoundingClientRect() is broken in iOS 3.2.1 on the iPad. The
 	// coordinates inside of the rect it returns don't have the page scroll position

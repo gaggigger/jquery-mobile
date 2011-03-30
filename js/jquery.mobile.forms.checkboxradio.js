@@ -12,17 +12,15 @@ $.widget( "mobile.checkboxradio", $.mobile.widget, {
 	_create: function(){
 		var self = this,
 			input = this.element,
-			label = input.closest("form,fieldset,[data-role='page']")
-				.find("label")
-				//NOTE: Windows Phone could not find the label through a selector
-				//filter works though.
-				.filter("[for=" + input[0].id + "]"),
+			//NOTE: Windows Phone could not find the label through a selector
+			//filter works though.
+			label = input.closest("form,fieldset,:jqmData(role='page')").find("label").filter("[for=" + input[0].id + "]"),
 			inputtype = input.attr( "type" ),
 			checkedicon = "ui-icon-" + inputtype + "-on",
 			uncheckedicon = "ui-icon-" + inputtype + "-off";
 
 		if ( inputtype != "checkbox" && inputtype != "radio" ) { return; }
-		
+
 		//expose for other methods
 		$.extend( this,{
 			label			: label,
@@ -33,13 +31,13 @@ $.widget( "mobile.checkboxradio", $.mobile.widget, {
 
 		// If there's no selected theme...
 		if( !this.options.theme ) {
-			this.options.theme = this.element.data( "theme" );
+			this.options.theme = this.element.jqmData( "theme" );
 		}
 
 		label
 			.buttonMarkup({
 				theme: this.options.theme,
-				icon: this.element.parents( "[data-type='horizontal']" ).length ? undefined : uncheckedicon,
+				icon: this.element.parents( ":jqmData(type='horizontal')" ).length ? undefined : uncheckedicon,
 				shadow: false
 			});
 
@@ -49,55 +47,31 @@ $.widget( "mobile.checkboxradio", $.mobile.widget, {
 			.wrapAll( "<div class='ui-" + inputtype +"'></div>" );
 
 		label.bind({
-			mouseover: function() {
+			vmouseover: function() {
 				if( $(this).parent().is('.ui-disabled') ){ return false; }
 			},
 
-			"touchmove": function( event ){
-				var oe = event.originalEvent.touches[0];
-				if( label.data("movestart") ){
-					if( Math.abs( label.data("movestart")[0] - oe.pageX ) > 10 ||
-						Math.abs( label.data("movestart")[1] - oe.pageY ) > 10 ){
-							label.data("moved", true);
-						}
-				}
-				else{
-					label.data("movestart", [ parseFloat( oe.pageX ), parseFloat( oe.pageY ) ]);
-				}
-			},
-
-			"touchend mouseup": function( event ){
+			vclick: function( event ){
 				if ( input.is( ":disabled" ) ){
 					event.preventDefault();
 					return;
 				}
-				
-				label.removeData("movestart");
-				if( label.data("etype") && label.data("etype") !== event.type || label.data("moved") ){
-					label.removeData("etype").removeData("moved");
-					if( label.data("moved") ){
-						label.removeData("moved");
-					}
-					return false;
-				}
-				label.data( "etype", event.type );
+
 				self._cacheVals();
 				input.attr( "checked", inputtype === "radio" && true || !input.is( ":checked" ) );
 				self._updateAll();
-				event.preventDefault();
-			},
-
-			click: false
+				return false;
+			}
 
 		});
 
 		input
 			.bind({
-				mousedown: function(){
+				vmousedown: function(){
 					this._cacheVals();
 				},
 
-				click: function(){
+				vclick: function(){
 					self._updateAll();
 				},
 
@@ -116,19 +90,19 @@ $.widget( "mobile.checkboxradio", $.mobile.widget, {
 
 	_cacheVals: function(){
 		this._getInputSet().each(function(){
-			$(this).data("cacheVal", $(this).is(":checked") );
+			$(this).jqmData("cacheVal", $(this).is(":checked") );
 		});
 	},
 
 	//returns either a set of radios with the same name attribute, or a single checkbox
 	_getInputSet: function(){
-		return this.element.closest( "form,fieldset,[data-role='page']" )
+		return this.element.closest( "form,fieldset,:jqmData(role='page')" )
 				.find( "input[name='"+ this.element.attr( "name" ) +"'][type='"+ this.inputtype +"']" );
 	},
 
 	_updateAll: function(){
 		this._getInputSet().each(function(){
-			var dVal = $(this).data("cacheVal");
+			var dVal = $(this).jqmData("cacheVal");
 			if( dVal && dVal !== $(this).is(":checked") || this.inputtype === "checkbox" ){
 				$(this).trigger("change");
 			}

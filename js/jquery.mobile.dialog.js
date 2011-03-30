@@ -6,7 +6,9 @@
 */
 (function($, undefined ) {
 $.widget( "mobile.dialog", $.mobile.widget, {
-	options: {},
+	options: {
+		closeBtnText: "Close"
+	},
 	_create: function(){
 		var self = this,
 			$el = self.element;
@@ -16,14 +18,14 @@ $.widget( "mobile.dialog", $.mobile.widget, {
 			//add ARIA role
 			.attr("role","dialog")
 			.addClass('ui-page ui-dialog ui-body-a')
-			.find('[data-role=header]')
+			.find( ":jqmData(role=header)" )
 			.addClass('ui-corner-top ui-overlay-shadow')
-				.prepend( '<a href="#" data-icon="delete" data-rel="back" data-iconpos="notext">Close</a>' )
+				.prepend( "<a href='#' data-" + $.mobile.ns + "icon='delete' data-" + $.mobile.ns + "rel='back' data-" + $.mobile.ns + "iconpos='notext'>"+ this.options.closeBtnText +"</a>" )
 			.end()
 			.find('.ui-content:not([class*="ui-body-"])')
 				.addClass('ui-body-c')
 			.end()
-			.find('.ui-content,[data-role=footer]')
+			.find( ".ui-content,:jqmData(role='footer')" )
 				.last()
 				.addClass('ui-corner-bottom ui-overlay-shadow');
 		
@@ -33,19 +35,19 @@ $.widget( "mobile.dialog", $.mobile.widget, {
 			- if the click was on the close button, or the link has a data-rel="back" it'll go back in history naturally
 		*/
 		this.element		
-			.bind( "click submit", function(e){
+			.bind( "vclick submit", function(e){
 				var $targetel;
-				if( e.type == "click" ){
+				if( e.type == "vclick" ){
 					$targetel = $(e.target).closest("a");
 				}
 				else{
 					$targetel = $(e.target).closest("form");
 				}
 				
-				if( $targetel.length && !$targetel.data("transition") ){
+				if( $targetel.length && !$targetel.jqmData("transition") ){
 					$targetel
-						.attr("data-transition", $.mobile.urlHistory.getActive().transition )
-						.attr("data-direction", "reverse");
+						.attr("data-" + $.mobile.ns + "transition", $.mobile.urlHistory.getActive().transition )
+						.attr("data-" + $.mobile.ns + "direction", "reverse");
 				}
 			});
 
