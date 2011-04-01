@@ -9,6 +9,13 @@
 			location.hash = "";
 		}
 	});
+	
+	
+	
+
+	
+	
+	
 
 	test( "forms with data attribute ajax set to false will not call changePage", function(){
 		var called = false;
@@ -306,6 +313,7 @@
 			}], 1000);
 	});
 
+
 	asyncTest( "going back from a dialog triggered from a dialog should result in the first dialog ", function(){
 		$.mobile.urlHistory.activeIndex = 0;
 		$.mobile.urlHistory.stack = [];
@@ -345,5 +353,43 @@
 				start();
 			}], 1000);
 	});
+	
+	
+	asyncTest( "Page title updates properly from title tag when loading an external page", function(){
+		$("#titletest1").click();
+		setTimeout(function(){
+			same(document.title, "Title Tag");
+			start();
+		},500);
+	});
+	
+	asyncTest( "Page title updates properly when clicking back to previous page", function(){
+		$.testHelper.openPage("#relative-after-embeded-page-first");
+		window.history.back();
+		setTimeout(function(){
+			same(document.title, "jQuery Mobile Navigation Test Suite");
+			start();
+		},500);
+	});
+	
+	asyncTest( "Page title updates properly from data-title attr  when loading an external page", function(){
+		$("#titletest2").click();
+		setTimeout(function(){
+			same(document.title, "Title Tag");
+			start();
+		},500);
+	});
+	
+	
+	asyncTest( "Page title updates properly from heading text in header when loading an external page", function(){
+		$("#titletest3").click();
+		setTimeout(function(){
+			same(document.title, "Title Heading"); 
+			start();
+		},500);
+	});
+	
+	
+
 })(jQuery);
 
