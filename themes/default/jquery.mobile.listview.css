@@ -17,7 +17,7 @@ ol.ui-listview .ui-li-jsnumbering:before { content: "" !important; } /* to avoid
 .ui-li .ui-btn-inner { display: block; position: relative; padding: 0; }
 .ui-li .ui-btn-inner a { padding: .7em 75px .7em 15px; display: block; }
 .ui-li-has-thumb .ui-btn-inner a { min-height: 60px; padding-left: 100px; }
-.ui-li-has-widethumb .ui-btn-inner { min-height: 60px; padding-left: 180px; }
+.ui-li-has-widethumb .ui-btn-inner a { min-height: 60px; padding-left: 180px; }
 .ui-li-has-icon .ui-btn-inner a {  min-height: 20px; padding-left: 40px; }
 .ui-li-heading { font-size: 16px; font-weight: bold; display: block; margin: .6em 0; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;  }
 .ui-li-desc {  font-size: 12px; font-weight: normal; display: block; margin: -.5em 0 .6em; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }

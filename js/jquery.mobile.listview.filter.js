@@ -62,6 +62,7 @@ $( ":jqmData(role='listview')" ).live( "listviewcreate", function() {
 					}
 				}
 				style.disabled = false;
+				$(window).trigger("scroll");
 			})
 			.appendTo( wrapper )
 			.textinput();
